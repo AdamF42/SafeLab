@@ -14,7 +14,7 @@ int T2;
 boolean firstEventEnter = 0;
 boolean firstEventExit = 0;
 int peopleCounter = 0;
-int maxCapacity = 10;
+int maxCapacity = 0;
 
 // Timer: Auxiliary variables
 unsigned long now = millis();
@@ -23,43 +23,15 @@ boolean startTimer = false;
 
 // Variables for web thing
 WebThingAdapter* adapter;
-const char* sensorTypes[] = {"MultiLevelSwitch","MotionSensor", nullptr};
-ThingDevice peopleDevice("people", "People Counter Sensors", sensorTypes);
-ThingProperty peopleProp("peopleNum", "", NUMBER, nullptr);
+const char* sensorTypes[] = {"MotionSensor", nullptr};
+ThingDevice peopleDevice("peopleInside", "People Counter Sensors", sensorTypes);
+ThingProperty peopleProp("peopleNum", "", INTEGER, nullptr);
+ThingProperty maxPeople("maxPeople", "", NUMBER, nullptr);
 
 // Wifi
-const char* ssid = "NETGEAR20";
-const char* password = "dynamicflower339";
+const char* ssid = "-----------";
+const char* password = "-----------";
 
-void setup() {
-  Serial.begin(115200);
-  Serial.println("Starting...");
-  pinMode(Receiver1, INPUT_PULLUP);
-  pinMode(Receiver2, INPUT_PULLUP);
-  attachInterrupt(digitalPinToInterrupt(Receiver1),funReceiver1,RISING);
-  attachInterrupt(digitalPinToInterrupt(Receiver2),funReceiver2,RISING);
-  Serial.println("Starting...");
-
-  // Connect to WiFi access point
-  Serial.print("Connecting to ");
-  Serial.println(ssid);
-  WiFi.mode(WIFI_STA);
-  WiFi.begin(ssid, password);
-  while ( WiFi.status() != WL_CONNECTED ) {
-    delay(500);
-    Serial.print(".");
-  }
-  Serial.println();
-
-  adapter = new WebThingAdapter("w25", WiFi.localIP());
-
-  peopleDevice.description = "Counter for people in a room";
-  peopleProp.title = "Counter";
-  peopleProp.minimum = 0;
-  peopleDevice.addProperty(&peopleProp);
-  adapter -> addDevice(&peopleDevice);
-  adapter -> begin();
-}
 
 ICACHE_RAM_ATTR void funReceiver1() {
   T1 = millis(); 
@@ -74,8 +46,7 @@ ICACHE_RAM_ATTR void funReceiver2() {
   T2 = millis();
   if (T1 == 0) {
     startTimer = true;
-  }  
-  lastTrigger = millis();
+  }  lastTrigger = millis();
 }
 
 void handlePassage() {
@@ -107,13 +78,62 @@ void handleTimeout() {
     startTimer = false;
 }
 
+void setMaxPeople() {
+    ThingPropertyValue maxP;
+    maxP = maxPeople.getValue();
+    maxCapacity = maxP.number;
+}
+
+void setup() {
+  Serial.begin(115200);
+  Serial.println("Starting...");
+  pinMode(Receiver1, INPUT_PULLUP);
+  pinMode(Receiver2, INPUT_PULLUP);
+  attachInterrupt(digitalPinToInterrupt(Receiver1),funReceiver1,RISING);
+  attachInterrupt(digitalPinToInterrupt(Receiver2),funReceiver2,RISING);
+  Serial.println("Starting...");
+
+  // Connect to WiFi access point
+  Serial.print("Connecting to ");
+  Serial.println(ssid);
+  WiFi.mode(WIFI_STA);
+  WiFi.begin(ssid, password);
+  while ( WiFi.status() != WL_CONNECTED ) {
+    delay(500);
+    Serial.print(".");
+  }
+  Serial.println();
+
+  adapter = new WebThingAdapter("w25", WiFi.localIP());
+
+  peopleDevice.description = "Counter for people in a room";
+  peopleProp.title = "PeopleCounter";
+  peopleProp.minimum = 0;
+  peopleProp.readOnly = true;
+  maxPeople.minimum = 0;
+  maxPeople.readOnly = false;
+  maxPeople.title = "MaxCapacity";
+  peopleDevice.addProperty(&peopleProp);
+  peopleDevice.addProperty(&maxPeople);
+  adapter -> addDevice(&peopleDevice);
+  adapter -> begin();
+
+  Serial.println("HTTP server started");
+  Serial.print("http://");
+  Serial.print(WiFi.localIP());
+  Serial.print("/things/");
+  Serial.println(peopleDevice.id);
+
+  setMaxPeople();
+}
+
 void loop() {
   
   if (T1 != 0 && T2 != 0){
+    setMaxPeople();
     handlePassage();
   }
   
-  //Serial.println(peopleCounter);
   now = millis();
   if(startTimer && (now - lastTrigger > (timeSeconds))) {
     handleTimeout();
@@ -123,12 +143,4 @@ void loop() {
   tpVal.number = peopleCounter;
   peopleProp.setValue(tpVal);
   adapter -> update();
-}
-
-void setMaxPeople(const JsonVariant &input) {
-  maxCapacity = 0;
-}
-
-ThingActionObject *action_generator(DynamicJsonDocument *input) {
-  return new ThingActionObject("maxPeople", input, setMaxPeople, nullptr);
 }
