@@ -26,11 +26,13 @@ WebThingAdapter* adapter;
 const char* sensorTypes[] = {"MotionSensor", nullptr};
 ThingDevice peopleDevice("peopleInside", "People Counter Sensors", sensorTypes);
 ThingProperty peopleProp("peopleNum", "", INTEGER, nullptr);
-ThingProperty maxPeople("maxPeople", "", NUMBER, nullptr);
+ThingProperty maxPeople("maxPeople", "", INTEGER, nullptr);
+ThingEvent maxPeopleReached("maxPeopleReached", "Reached the maximum capacity of the room", INTEGER, "AlarmEvent");
 
 // Wifi
-const char* ssid = "-----------";
-const char* password = "-----------";
+const char* ssid = "--------";
+const char* password = "---------";
+
 
 
 ICACHE_RAM_ATTR void funReceiver1() {
@@ -57,6 +59,10 @@ void handlePassage() {
     firstEventExit = 0;
     if (peopleCounter > maxCapacity) {
         Serial.println("MAXIMUM REACHED");
+        ThingPropertyValue val;
+        val.integer = peopleCounter;
+        ThingEventObject *ev = new ThingEventObject("maxPeopleReached", INTEGER, val);
+        peopleDevice.queueEventObject(ev);    
     }
   }
   else if (T2 > T1 && firstEventExit == 0) {
@@ -81,7 +87,7 @@ void handleTimeout() {
 void setMaxPeople() {
     ThingPropertyValue maxP;
     maxP = maxPeople.getValue();
-    maxCapacity = maxP.number;
+    maxCapacity = maxP.integer;
 }
 
 void setup() {
@@ -115,6 +121,7 @@ void setup() {
   maxPeople.title = "MaxCapacity";
   peopleDevice.addProperty(&peopleProp);
   peopleDevice.addProperty(&maxPeople);
+  peopleDevice.addEvent(&maxPeopleReached);
   adapter -> addDevice(&peopleDevice);
   adapter -> begin();
 
@@ -132,6 +139,9 @@ void loop() {
   if (T1 != 0 && T2 != 0){
     setMaxPeople();
     handlePassage();
+    ThingPropertyValue tpVal;
+    tpVal.integer = peopleCounter;
+    peopleProp.setValue(tpVal);
   }
   
   now = millis();
@@ -139,8 +149,5 @@ void loop() {
     handleTimeout();
   }
   
-  ThingPropertyValue tpVal;
-  tpVal.number = peopleCounter;
-  peopleProp.setValue(tpVal);
   adapter -> update();
 }
