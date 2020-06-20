@@ -9,12 +9,15 @@
 // Variables 
 const int Receiver1 = 12;
 const int Receiver2 = 14;
-int T1;
-int T2;
+const int ReceiverCenter = A0;
+const int THRESHOLD = 200;
+int TDown1;   //Time laser 1 is obscured
+int TUp1;     //Time laser 1 return visible
+int TDown2;   //Time laser 2 is obscures
+int TUp2;     //Time laser 2 return visible
 boolean firstEventEnter = 0;
 boolean firstEventExit = 0;
 int peopleCounter = 0;
-int maxCapacity = 0;
 
 // Timer: Auxiliary variables
 unsigned long now = millis();
@@ -26,18 +29,21 @@ WebThingAdapter* adapter;
 const char* sensorTypes[] = {"MotionSensor", nullptr};
 ThingDevice peopleDevice("peopleInside", "People Counter Sensors", sensorTypes);
 ThingProperty peopleProp("peopleNum", "", INTEGER, nullptr);
-ThingProperty maxPeople("maxPeople", "", INTEGER, nullptr);
-ThingEvent maxPeopleReached("maxPeopleReached", "Reached the maximum capacity of the room", INTEGER, "AlarmEvent");
+ThingEvent changeNumPeople("changeNumPeople", "A new person entered in/exited from the room", INTEGER, "AlarmEvent");
 
 // Wifi
-const char* ssid = "--------";
-const char* password = "---------";
-
+const char* ssid = "NETGEAR20";
+const char* password = "dynamicflower339";
 
 
 ICACHE_RAM_ATTR void funReceiver1() {
-  T1 = millis(); 
-  if (T2 == 0) {
+  int timer = millis();
+  if (TDown1 == 0) {
+    TDown1 = timer;
+  } else if (timer != TDown1){
+    TUp1 = timer;
+  }
+  if (TDown2 == 0) {
     startTimer = true;
   }
   lastTrigger = millis();
@@ -45,58 +51,64 @@ ICACHE_RAM_ATTR void funReceiver1() {
 
 
 ICACHE_RAM_ATTR void funReceiver2() {
-  T2 = millis();
-  if (T1 == 0) {
+  int timer = millis();
+  if (TDown2 == 0) {
+    TDown2 = timer;
+  } else if (timer != TDown2){
+    TUp2 = timer;
+  }
+  if (TDown1 == 0) {
     startTimer = true;
-  }  lastTrigger = millis();
+  }  
+  lastTrigger = millis();
+}
+
+void newEvent() {
+  ThingPropertyValue val;
+  val.integer = peopleCounter;
+  peopleProp.setValue(val);
+  ThingEventObject *ev = new ThingEventObject("changeNumPeople", INTEGER, val);
+  peopleDevice.queueEventObject(ev);    
 }
 
 void handlePassage() {
-  if(T1 > T2 && firstEventEnter == 0) {
+  if(TUp1 > TUp2 && TDown1 > TDown2 && firstEventEnter == 0) {
     peopleCounter ++;
     Serial.println(peopleCounter);
+    newEvent();
     firstEventEnter = 1;
     firstEventExit = 0;
-    if (peopleCounter > maxCapacity) {
-        Serial.println("MAXIMUM REACHED");
-        ThingPropertyValue val;
-        val.integer = peopleCounter;
-        ThingEventObject *ev = new ThingEventObject("maxPeopleReached", INTEGER, val);
-        peopleDevice.queueEventObject(ev);    
-    }
   }
-  else if (T2 > T1 && firstEventExit == 0) {
+  else if (TUp2 > TUp1 && TDown2 > TDown1 && firstEventExit == 0) {
     if (peopleCounter > 0) {
       peopleCounter --;      
     }
     Serial.println(peopleCounter);
-    firstEventEnter = 0;
+    newEvent();
     firstEventExit = 1;
+    firstEventEnter = 0;
   }
 
 }
 
-void handleTimeout() {
-    T1 = 0;
-    T2 = 0;
+
+void resetVars() {
+    TDown1 = 0; TUp1 = 0;
+    TDown2 = 0; TUp2 = 0;
     firstEventEnter = 0;
     firstEventExit = 0;
     startTimer = false;
 }
 
-void setMaxPeople() {
-    ThingPropertyValue maxP;
-    maxP = maxPeople.getValue();
-    maxCapacity = maxP.integer;
-}
 
 void setup() {
   Serial.begin(115200);
   Serial.println("Starting...");
+  pinMode(ReceiverCenter, INPUT);
   pinMode(Receiver1, INPUT_PULLUP);
   pinMode(Receiver2, INPUT_PULLUP);
-  attachInterrupt(digitalPinToInterrupt(Receiver1),funReceiver1,RISING);
-  attachInterrupt(digitalPinToInterrupt(Receiver2),funReceiver2,RISING);
+  attachInterrupt(digitalPinToInterrupt(Receiver1),funReceiver1,CHANGE);
+  attachInterrupt(digitalPinToInterrupt(Receiver2),funReceiver2,CHANGE);
   Serial.println("Starting...");
 
   // Connect to WiFi access point
@@ -116,12 +128,8 @@ void setup() {
   peopleProp.title = "PeopleCounter";
   peopleProp.minimum = 0;
   peopleProp.readOnly = true;
-  maxPeople.minimum = 0;
-  maxPeople.readOnly = false;
-  maxPeople.title = "MaxCapacity";
   peopleDevice.addProperty(&peopleProp);
-  peopleDevice.addProperty(&maxPeople);
-  peopleDevice.addEvent(&maxPeopleReached);
+  peopleDevice.addEvent(&changeNumPeople);
   adapter -> addDevice(&peopleDevice);
   adapter -> begin();
 
@@ -131,23 +139,26 @@ void setup() {
   Serial.print("/things/");
   Serial.println(peopleDevice.id);
 
-  setMaxPeople();
 }
 
+
 void loop() {
-  
-  if (T1 != 0 && T2 != 0){
-    setMaxPeople();
+  //Serial.println(analogRead(ReceiverCenter));
+  if (TUp1 != 0 && TUp2 != 0){
     handlePassage();
-    ThingPropertyValue tpVal;
-    tpVal.integer = peopleCounter;
-    peopleProp.setValue(tpVal);
   }
   
   now = millis();
-  if(startTimer && (now - lastTrigger > (timeSeconds))) {
-    handleTimeout();
+  if(startTimer && (now - lastTrigger > (timeSeconds)) && !((TDown1 != 0)&&(TDown2 != 0) && (TUp1 == 0) && (TUp2 == 0))){
+    resetVars();
   }
   
   adapter -> update();
 }
+
+//TESTARE
+// - entrata/uscita
+// - prendere un solo led e poi tornare indietro
+// - prendere i due led e poi tornare indietro
+// - prendere i due led contemporaneamente e poi tornare indietro
+// - non vada sotto zero
