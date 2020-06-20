@@ -9,8 +9,6 @@
 // Variables 
 const int Receiver1 = 12;
 const int Receiver2 = 14;
-const int ReceiverCenter = A0;
-const int THRESHOLD = 200;
 int TDown1;   //Time laser 1 is obscured
 int TUp1;     //Time laser 1 return visible
 int TDown2;   //Time laser 2 is obscures
@@ -35,35 +33,30 @@ ThingEvent changeNumPeople("changeNumPeople", "A new person entered in/exited fr
 const char* ssid = "NETGEAR20";
 const char* password = "dynamicflower339";
 
-
-ICACHE_RAM_ATTR void funReceiver1() {
+void handlerReceiverInterrupt(int* downTime, int* upTime, int* other) {
   int timer = millis();
-  if (TDown1 == 0) {
-    TDown1 = timer;
-  } else if (timer != TDown1){
-    TUp1 = timer;
+  if (*downTime == 0) {
+    *downTime = timer;
+  } else if (timer != *downTime){
+    *upTime = timer;
   }
-  if (TDown2 == 0) {
+  if (*other == 0) {
     startTimer = true;
   }
-  lastTrigger = millis();
+  lastTrigger = millis();  
+}
+
+
+ICACHE_RAM_ATTR void funReceiver1() {
+  handlerReceiverInterrupt(&TDown1, &TUp1, &TDown2);
 }
 
 
 ICACHE_RAM_ATTR void funReceiver2() {
-  int timer = millis();
-  if (TDown2 == 0) {
-    TDown2 = timer;
-  } else if (timer != TDown2){
-    TUp2 = timer;
-  }
-  if (TDown1 == 0) {
-    startTimer = true;
-  }  
-  lastTrigger = millis();
+  handlerReceiverInterrupt(&TDown2, &TUp2, &TDown1);
 }
 
-void newEvent() {
+void updateThingValue() {
   ThingPropertyValue val;
   val.integer = peopleCounter;
   peopleProp.setValue(val);
@@ -75,7 +68,7 @@ void handlePassage() {
   if(TUp1 > TUp2 && TDown1 > TDown2 && firstEventEnter == 0) {
     peopleCounter ++;
     Serial.println(peopleCounter);
-    newEvent();
+    updateThingValue();
     firstEventEnter = 1;
     firstEventExit = 0;
   }
@@ -84,13 +77,12 @@ void handlePassage() {
       peopleCounter --;      
     }
     Serial.println(peopleCounter);
-    newEvent();
+    updateThingValue();
     firstEventExit = 1;
     firstEventEnter = 0;
   }
 
 }
-
 
 void resetVars() {
     TDown1 = 0; TUp1 = 0;
@@ -104,7 +96,6 @@ void resetVars() {
 void setup() {
   Serial.begin(115200);
   Serial.println("Starting...");
-  pinMode(ReceiverCenter, INPUT);
   pinMode(Receiver1, INPUT_PULLUP);
   pinMode(Receiver2, INPUT_PULLUP);
   attachInterrupt(digitalPinToInterrupt(Receiver1),funReceiver1,CHANGE);
@@ -149,7 +140,7 @@ void loop() {
   }
   
   now = millis();
-  if(startTimer && (now - lastTrigger > (timeSeconds)) && !((TDown1 != 0)&&(TDown2 != 0) && (TUp1 == 0) && (TUp2 == 0))){
+  if(startTimer && (now - lastTrigger > (timeSeconds)) && !((TDown1 != 0) && (TDown2 != 0) && (TUp1 == 0) && (TUp2 == 0))){
     resetVars();
   }
   
