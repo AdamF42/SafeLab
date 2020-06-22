@@ -120,26 +120,7 @@ void loop(void) {
   Serial.print("[LOG] Pressure: ");
   Serial.println(pressureValue.number);
  }
-
-  // ThingPropertyValue temperatureValue;
-  // temperatureValue.number = tempValue;
-  // temperature.setValue(temperatureValue);
-  
-  // ThingPropertyValue humidityValue;
-  // humidityValue.number = humValue;
-  // humidity.setValue(humidityValue);
-
-  // ThingPropertyValue pressureValue;
-  // pressureValue.number = pressValue;
-  // pressureProp.setValue(pressureValue);
-
-  // Serial.print("[LOG] Humidity: ");
-  // Serial.println(humidityValue.number);
-  // Serial.print("[LOG] Temperature: ");
-  // Serial.println(temperatureValue.number);
-  // Serial.print("[LOG] Pressure: ");
-  // Serial.println(pressureValue.number);
-
+ 
 }
 
 
