@@ -1,0 +1,11 @@
+thingweb.node-wot-master.zip
+
+thingweb.node-wot-master/
+
+*/node_modules/
+
+WoTDevices/RoomWeather/.vscode/
+
+mashupapplication/.idea/
+
+mashupapplication/lib/
