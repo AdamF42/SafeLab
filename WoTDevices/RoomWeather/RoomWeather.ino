@@ -35,17 +35,8 @@ ThingDevice device("room-weather", "RoomWeather", sensorType);
 // PROPERTIES
 ThingProperty temperature("temperature", "", NUMBER, "TemperatureProperty");
 ThingProperty humidity("humidity", "", NUMBER, "LevelProperty");
-ThingProperty pressureProp("pressure", "", INTEGER, "");
+ThingProperty pressureProp("pressure", "", NUMBER, nullptr);
 
-ThingEvent newTempValue("newTempValue",
-                      "A new temperature value is produced",
-                      NUMBER, "newTempValueEvent");
-ThingEvent newHumValue("newHumValue",
-                      "A new humidity value is produced",
-                      NUMBER, "newHumValueEvent");
-ThingEvent newPressValue("newPressValue",
-                      "A new pressure value is produced",
-                      NUMBER, "newPressValueEvent");
 
 void setup(void) {
   dht.begin();
@@ -69,6 +60,7 @@ void setup(void) {
   Serial.println(ssid);
   Serial.print("IP address: ");
   Serial.println(WiFi.localIP());
+  
   adapter = new WebThingAdapter("room-weather", WiFi.localIP());
 
   device.description = "Multisensor";
@@ -90,15 +82,6 @@ void setup(void) {
   pressureProp.readOnly = true;
   device.addProperty(&pressureProp);
 
-  newTempValue.unit = "degree celsius";
-  device.addEvent(&newTempValue);
-
-  newHumValue.unit = "percent";
-  device.addEvent(&newHumValue);
-
-  newPressValue.unit = "hPa"
-  device.addEvent(&newPressValue);
-
   adapter->addDevice(&device);
   adapter->begin();
 
@@ -114,47 +97,58 @@ void loop(void) {
   getValues();
   adapter->update();
 
+ if ( tempValue != temperature.getValue().number ) {
   ThingPropertyValue temperatureValue;
   temperatureValue.number = tempValue;
   temperature.setValue(temperatureValue);
-  
+  Serial.print("[LOG] Temperature: ");
+  Serial.println(temperatureValue.number);
+ }
+
+ if ( humValue != humidity.getValue().number ) {
   ThingPropertyValue humidityValue;
   humidityValue.number = humValue;
   humidity.setValue(humidityValue);
+  Serial.print("[LOG] Humidity: ");
+  Serial.println(humidityValue.number);
+ }
 
+ if ( pressValue != pressureProp.getValue().number ) {
   ThingPropertyValue pressureValue;
   pressureValue.number = pressValue;
   pressureProp.setValue(pressureValue);
+  Serial.print("[LOG] Pressure: ");
+  Serial.println(pressureValue.number);
+ }
 
-  if ( tempValue != temperature.getValue().number ) {
-    ThingDataValue val;
-    val.number = tempValue;
-    ThingEventObject *ev = new ThingEventObject("newTempValue", NUMBER, val);
-    device.queueEventObject(ev);
-  }
+  // ThingPropertyValue temperatureValue;
+  // temperatureValue.number = tempValue;
+  // temperature.setValue(temperatureValue);
+  
+  // ThingPropertyValue humidityValue;
+  // humidityValue.number = humValue;
+  // humidity.setValue(humidityValue);
 
-  if ( humValue != humidity.getValue().number ) {
-    ThingDataValue val;
-    val.number = humValue;
-    ThingEventObject *ev = new ThingEventObject("newHumValue", NUMBER, val);
-    device.queueEventObject(ev);
-  }
+  // ThingPropertyValue pressureValue;
+  // pressureValue.number = pressValue;
+  // pressureProp.setValue(pressureValue);
 
-  if ( pressValue != pressureProp.getValue().number ) {
-    ThingDataValue val;
-    val.number = pressValue;
-    ThingEventObject *ev = new ThingEventObject("newPressValue", INTEGER, val);
-    device.queueEventObject(ev);
-  }
+  // Serial.print("[LOG] Humidity: ");
+  // Serial.println(humidityValue.number);
+  // Serial.print("[LOG] Temperature: ");
+  // Serial.println(temperatureValue.number);
+  // Serial.print("[LOG] Pressure: ");
+  // Serial.println(pressureValue.number);
 
 }
 
 
 void getValues(){
-  int counter = 0;
   humValue = dht.readHumidity();
-  while (isnan(humValue))) {
+  tempValue = dht.readTemperature();
+  while (isnan(humValue) || isnan(tempValue)) {
       humValue = dht.readHumidity();
+      tempValue = dht.readTemperature();
       delay(samplingPeriod);
   }      
 
@@ -163,7 +157,7 @@ void getValues(){
   {
     // Wait for the measurement to complete:
     delay(status);
-    tempValue = status = pressure.getTemperature(T);
+    status = pressure.getTemperature(T);
     if (status != 0)
     {
       status = pressure.startPressure(3);
@@ -183,11 +177,5 @@ void getValues(){
     else Serial.println("error retrieving temperature measurement\n");
   }
   else Serial.println("error starting temperature measurement\n");
-
-  Serial.print("[LOG] Read the humidity value ... ");
-  Serial.println(humValue);
-  Serial.print("[LOG] Read the temperature value ... ");
-  Serial.println(tempValue);
-  Serial.print("[LOG] Read the pressure value ... ");
-  Serial.println(pressValue);
+  delay(samplingPeriod);
 }
