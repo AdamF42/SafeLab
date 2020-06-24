@@ -6,7 +6,10 @@
   "scripts": {
     "start:dev": "nodemon dist/index.js",
     "build:dev": "tsc --watch --preserveWatchOutput",
-    "dev": "concurrently \"npm:build:dev\" \"npm:start:dev\""
+    "dev": "concurrently \"npm:build:dev\" \"npm:start:dev\"",
+    "start:prod": "node dist/index.js",
+    "build:prod": "tsc",
+    "prod": "concurrently \"npm:build:prod\" \"npm:start:prod\""
   },
   "keywords": [],
   "author": "Adamo Fapohunda",
