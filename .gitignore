@@ -10,6 +10,6 @@ mashupapplication/.idea/
 
 mashupapplication/lib/
 
-AlarmBot/dist/
+AlertBot/dist/
 
-AlarmBot/.env
+AlertBot/.env
