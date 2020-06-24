@@ -11,3 +11,5 @@ mashupapplication/.idea/
 mashupapplication/lib/
 
 AlarmBot/dist/
+
+AlarmBot/.env
