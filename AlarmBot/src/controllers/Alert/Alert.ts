@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { CrudController } from '../CrudController';
+//@ts-ignore
 import { inject } from '@alexlafroscia/service-locator';
 import { CHAT_ID } from '../../config/constants';
 import { PeopleCount } from '../../models/PeopleCount';

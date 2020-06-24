@@ -1,9 +1,11 @@
 import express from 'express';
 import { PORT, TOKEN } from './config/constants';
 import { userRouter } from './routes';
+//@ts-ignore
 import { registry } from '@alexlafroscia/service-locator';
+//@ts-ignore
+import TelegramBot from 'node-telegram-bot-api';
 
-const TelegramBot = require('node-telegram-bot-api');
 const bot = new TelegramBot(TOKEN, {polling: true});
 
 registry.register('botService', bot);
