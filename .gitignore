@@ -9,3 +9,7 @@ WoTDevices/RoomWeather/.vscode/
 mashupapplication/.idea/
 
 mashupapplication/lib/
+
+AlertBot/dist/
+
+AlertBot/.env

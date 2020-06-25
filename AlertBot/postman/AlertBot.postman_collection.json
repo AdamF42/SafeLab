@@ -1,0 +1,52 @@
+{
+	"info": {
+		"_postman_id": "b0c447bb-9ab1-471c-8584-14875a0492f8",
+		"name": "AlertBot",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Bot",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Connection",
+						"value": "keep-alive",
+						"disabled": true
+					},
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"disabled": true
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6ImU2MmU2ODgxLTBhZTktNGZmMS04ZGQ3LWViOWY3NTQwMTRlNCJ9.eyJyb2xlIjoidXNlcl90b2tlbiIsImlhdCI6MTU5MjAwODc0MSwiaXNzIjoiTm90IHNldC4ifQ.bi5iNd2sq3RboFC9hUxyV_Kx2ZxshQoR_FHR1sI5VOuUf6hjZR0IbU5Ye30j71h990iRvVQF8y6M3TdtFrL55Q",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"location\":\"living room\",\n    \"people\": 10\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{local_env}}/alert",
+					"host": [
+						"{{local_env}}"
+					],
+					"path": [
+						"alert"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}
