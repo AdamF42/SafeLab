@@ -7,7 +7,7 @@ In order to test and use, you should retrieve the telegram chat id used.
 
 | HTTP Method           | Action              | Description                              |
 | --------------------- | ------------------- | ---------------------------------------- |
-| POST                  | [Alert](#alert) | Send alert with the number of people in a certain place.|
+| POST                  | [Alert](#alert)     | Send alert with the number of people in a certain place.|
 
 ## Alert
 
@@ -23,13 +23,13 @@ In order to test and use, you should retrieve the telegram chat id used.
 
 ### Response
 
-The service will return a the following status codes:
+The service will return the following status codes:
 * 201: if everithing works fine
 * 404: if an error occurr
 
 ## How to setup
 
-1. Insert your api key in package.json
+1. Insert token and chat id in .env file as shown in [.env.example](.env.example)
 
 2. Build and run with docker:
 
