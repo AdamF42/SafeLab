@@ -25,7 +25,7 @@ boolean startTimer = false;
 // Variables for web thing
 WebThingAdapter* adapter;
 const char* sensorTypes[] = {"MotionSensor", nullptr};
-ThingDevice peopleDevice("peopleInside", "People Counter Sensors", sensorTypes);
+ThingDevice peopleDevice("peopleCounter", "People Counter Sensors", sensorTypes);
 ThingProperty peopleProp("peopleNum", "", INTEGER, nullptr);
 ThingEvent changeNumPeople("changeNumPeople", "A new person entered in/exited from the room", INTEGER, "AlarmEvent");
 
