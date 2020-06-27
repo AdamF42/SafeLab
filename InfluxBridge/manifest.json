@@ -1,0 +1,70 @@
+{
+  "manifest_version": 1,
+  "id": "InfluxBridge",
+  "name": "InfluxDB2.0",
+  "short_name": "InfluxDB2.0",
+  "version": "0.1.0",
+  "description": "Save your device states to an InfluxDB 2.0",
+  "homepage_url": "https://github.com/AdamF42/IoTProj/tree/master/InfluxBridge#readme",
+  "license": "MPL-2.0",
+  "author": "Tim Hellhake, Adamo Fapohunda",
+  "gateway_specific_settings": {
+    "webthings": {
+      "exec": "{nodeLoader} {path}",
+      "strict_min_version": "0.10.0",
+      "strict_max_version": "*",
+      "primary_type": "adapter",
+      "enabled": true
+    }
+  },
+  
+  "options": {
+    "default": {
+      "names": []
+    },
+    "schema": {
+      "type": "object",
+      "required": [
+        "names",
+        "accessToken",
+        "host",
+        "port",
+        "org",
+        "bucket",
+        "influxToken"
+      ],
+      "properties": {
+        "names": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "accessToken": {
+          "type": "string",
+          "title": "The access token for the gateway"
+        },
+        "host": {
+          "type": "string",
+          "title": "The hostname of the influxdb"
+        },
+        "port": {
+          "type": "integer",
+          "title": "The port of the influxdb"
+        },
+        "org": {
+          "type": "string",
+          "title": "The org of the influxdb"
+        },
+        "bucket": {
+          "type": "string",
+          "title": "The bucket of the influxdb"
+        },
+        "influxToken": {
+          "type": "string",
+          "title": "The access token for influxdb"
+        }
+      }
+    }
+  }
+}
