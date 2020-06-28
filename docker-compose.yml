@@ -1,0 +1,58 @@
+version: "3.7"
+services:
+  grafana:
+    image: grafana/grafana:6.7.3
+    container_name: grafana
+    restart: unless-stopped
+    user: ${GRAFANA_USER_ID}
+    ports:
+      - 3000:3000
+    networks:
+      - monitoring
+    volumes:
+      - ${GRAFANA_VOLUME}:/var/lib/grafana
+    env_file:
+      - .env
+  influxdb:
+    image: quay.io/influxdb/influxdb:2.0.0-beta
+    container_name: influxdb
+    restart: unless-stopped
+    ports:
+      - "9999:9999"
+    networks:
+      - monitoring
+    volumes: 
+      - "${INFLUX_VOLUME}:/root/.influxdbv2"
+    env_file:
+      - .env
+  webthings-gateway:
+    container_name: gateway
+    image: mozillaiot/gateway:latest
+    restart: unless-stopped
+    network_mode: host
+    environment:
+      - "TZ=America/Los_Angeles"
+    volumes:
+      - ${MOZILLA_IOT_VOLUME}:/home/node/.mozilla-iot
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "1m"
+        max-file: "10"
+    env_file:
+      - .env
+  alert_bot:
+    image: alert_bot
+    container_name: alert_bot
+    restart: unless-stopped
+    ports:
+      - 4000:4000
+    build:
+      context: ./AlertBot
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    networks:
+      - monitoring
+networks:
+  monitoring:
