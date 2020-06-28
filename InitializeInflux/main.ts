@@ -5,25 +5,25 @@ import { OrganizationGenerator } from './organization/organizationGenerator';
 import { UserGenerator } from './user/userGenerator';
 
 
-const authToken = "60nvdyNBIb5nMBmg3RVNTdanrjUksYh7fGjlXYJ6Rg8dP4lesVV80XjNmWFIkvu9_FpHe3vyL2V5YhqBbav2Kw=="
-const address = "http://localhost:9999/api/v2"
+var Args = process.argv.slice(2);
 
-const orgName = "SuperCiccii";
-const orgDescription = "";
+const authToken = Args[0]; //"60nvdyNBIb5nMBmg3RVNTdanrjUksYh7fGjlXYJ6Rg8dP4lesVV80XjNmWFIkvu9_FpHe3vyL2V5YhqBbav2Kw=="
+const address = Args[1]; //"http://localhost:9999/api/v2"
+
+const orgName = Args[2]; //"SuperCiccii";
 var orgID;
 
-const userName = "Ciccioneeee";
+const userName = Args[3]; //"Ciccioneeee";
 var userID;
 
-const bucketName = "Ciccio";
-const bucketDescription = "";
-const expireTime = 55032940;
+const bucketName = Args[4]; //"Ciccio";
+const expireTime = parseInt(Args[5]); //55032940;
 var bucketID;
   
-const authDescription = "ciccioAuth";
+const authDescription = Args[6]; //"ciccioAuth";
 var authID;
 
-const org = new OrganizationGenerator(orgName, orgDescription);
+const org = new OrganizationGenerator(orgName);
 axios(org.create(address, authToken))
     .then(function(response){
         assignOrg(response);
@@ -32,7 +32,7 @@ axios(org.create(address, authToken))
     })
     .catch(function (error) {
         console.log("ERROR IN CREATING ORG");
-        console.log(error);
+        console.log(error.message);
     });
 
 function createUser(){
@@ -50,16 +50,11 @@ function createUser(){
     
 function addUserToOrg() {
     axios(org.adduser(userID, orgID, address, authToken))
-    .then(function (response) {
-      console.log(JSON.stringify(response.data));
-    })
-    .catch(function (error) {
-      console.log(error);
-    });    
+    console.log("User "+userID+"added to org"+orgID);
 }
 
 function createBucket(){
-    const bucket = new BucketGenerator(bucketName, expireTime, orgID, bucketDescription);
+    const bucket = new BucketGenerator(bucketName, expireTime, orgID);
     axios(bucket.create(address, authToken))
         .then(function (response) {
             assignBucket(response);
@@ -86,25 +81,21 @@ function createAuthorization(){
 }
 
 function assignOrg(response){
-    console.log("ORG RESPONSE");
-    console.log(JSON.stringify(response.data));
+    console.log("Org Id: "+ response.data.id)
     orgID = response.data.id;  
 }
 
 function assignUser(response){
-    console.log("USER RESPONSE");
-    console.log(JSON.stringify(response.data));
+    console.log("Usr Id: "+ response.data.id)
     userID = response.data.id;
 }
 
 function assignBucket(response){
-    console.log("BUCKET RESPONSE");
-    console.log(JSON.stringify(response.data));
+    console.log("Buck Id: "+ response.data.id)
     bucketID = response.data.id;  
 }
 
 function assignAuth(response){
-    console.log("AUTHORIZATION RESPONSE");
-    console.log(JSON.stringify(response.data));
+    console.log("Auth Id: "+ response.data.id)
     authID = response.data.id; 
 }

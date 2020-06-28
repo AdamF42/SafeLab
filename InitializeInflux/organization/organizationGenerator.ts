@@ -2,11 +2,10 @@
 export class OrganizationGenerator {
     descriptionJson: string;
  
-    constructor(orgName: string, orgDescription: string = ""){
+    constructor(orgName: string){
         this.descriptionJson = 
             `{
                 "name": \"`+orgName+`\",
-                "description": \"`+orgDescription+`\",
                 "status": "active"
             }`;
     }

@@ -2,11 +2,10 @@
 export class BucketGenerator {
     descriptionJson: string;
  
-    constructor(bucketName: string, expireTime: number, orgID: string, bucketDescription: string = ""){
+    constructor(bucketName: string, expireTime: number, orgID: string){
         this.descriptionJson = 
             `{
                 "name": \"`+bucketName+`\",
-                "description": \"`+bucketDescription+`\",
                 "orgID": \"`+orgID+`\",
                 "retentionRules": [{
                     "type": "expire",
@@ -26,14 +25,4 @@ export class BucketGenerator {
             data : this.descriptionJson
         };
     }
-
-    // delete(address: string, bucketID: string) {
-    //     return {
-    //         method: 'delete',
-    //         url: address+'/buckets/'+bucketID,
-    //         headers: { 
-    //           'Zap-Trace-Span': '<string>'
-    //         }
-    //     };
-    // }
 }
