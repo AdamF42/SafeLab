@@ -13,3 +13,7 @@ mashupapplication/lib/
 AlertBot/dist/
 
 AlertBot/.env
+
+.env
+
+.env.old
