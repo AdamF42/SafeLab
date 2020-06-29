@@ -1,38 +1,52 @@
+var axios = require('axios');
+import { Config } from '../config/config'
 
 export class OrganizationGenerator {
-    descriptionJson: string;
- 
-    constructor(orgName: string){
-        this.descriptionJson = 
-            `{
-                "name": \"`+orgName+`\",
-                "status": "active"
-            }`;
+
+    private address: string;
+    private authToken: string;
+
+    constructor(address: string, authToken: string){
+        this.address = address;
+        this.authToken = authToken;
     }
 
-    create(address: string, authToken: string) {
-        return {
-            method: 'post',
-            url: address+'/orgs',
-            headers: { 
-                'Authorization': 'Token '+authToken, 
-                'Content-Type': 'application/json'
-            },
-            data : this.descriptionJson
-        };
+    async create(name: string){
+        return axios(this.getConfig(name))
+        .then(function(response){
+            console.log("Org Id: "+ response.data.id);
+            return Promise.resolve(response.data.id);
+        })
+        .catch(function (error) {
+            console.log("ERROR IN CREATING ORG");
+            console.log(error.message);
+            console.log(error.response.data.message);
+        });
     }
 
-    adduser(userId: string, orgId: string, address: string, authToken: string){
-        var userJson = JSON.stringify({"id":userId});
-        return {
-          method: 'post',
-          url: address+'/orgs/'+orgId+'/members',
-          headers: { 
-            'Authorization': 'Token '+authToken, 
-            'Content-Type': 'application/json', 
-          },
-          data : userJson
-        };    
+    private getConfig(name: string){
+        let descriptionJson = 
+            {
+                name: name,
+                status: "active"
+            }; 
 
+        let config = new Config('post', this.address+'/orgs', 'Token '+this.authToken, 'application/json', descriptionJson)
+        return config.getObjConfig();        
     }
+
+    addUser(userId: string, orgId: string){
+        let config = new Config('post', this.address+'/orgs/'+orgId+'/members', 'Token '+this.authToken, 'application/json', {'id':userId} )
+        axios(config.getObjConfig())
+        .then(
+            console.log("User "+userId+"added to org "+orgId)
+        )
+        .catch(function (error) {
+            console.log("ERROR IN ADDING USR TO ORG");
+            console.log(error.message);
+            console.log(error.response.data.message);
+        });
+    }
+
+
 }

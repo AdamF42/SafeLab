@@ -9,93 +9,42 @@ var Args = process.argv.slice(2);
 
 const authToken = Args[0]; //"60nvdyNBIb5nMBmg3RVNTdanrjUksYh7fGjlXYJ6Rg8dP4lesVV80XjNmWFIkvu9_FpHe3vyL2V5YhqBbav2Kw=="
 const address = Args[1]; //"http://localhost:9999/api/v2"
-
 const orgName = Args[2]; //"SuperCiccii";
-var orgID;
-
 const userName = Args[3]; //"Ciccioneeee";
-var userID;
-
 const bucketName = Args[4]; //"Ciccio";
 const expireTime = parseInt(Args[5]); //55032940;
-var bucketID;
-  
 const authDescription = Args[6]; //"ciccioAuth";
-var authID;
 
-const org = new OrganizationGenerator(orgName);
-axios(org.create(address, authToken))
-    .then(function(response){
-        assignOrg(response);
-        createUser(); 
-        createBucket();
-    })
-    .catch(function (error) {
-        console.log("ERROR IN CREATING ORG");
-        console.log(error.message);
-    });
 
-function createUser(){
-    const user = new UserGenerator(userName);
-    axios(user.create(address, authToken))
-        .then(function (response) {
-            assignUser(response);
-            addUserToOrg();
-        })
-        .catch(function (error) {
-            console.log("ERROR IN CREATING USR");
-            console.log(error);
-        });      
-}
-    
-function addUserToOrg() {
-    axios(org.adduser(userID, orgID, address, authToken))
-    console.log("User "+userID+"added to org"+orgID);
-}
 
-function createBucket(){
-    const bucket = new BucketGenerator(bucketName, expireTime, orgID);
-    axios(bucket.create(address, authToken))
-        .then(function (response) {
-            assignBucket(response);
-            createAuthorization();
-        })
-        .catch(function (error) {
-            console.log("ERROR IN CREATING BUCKET");
-            console.log(error);
-            throw error;
-        });
+class StructureGenerator {
+
+    private orgID?: string;
+    private userID?: string;
+    private bucketID?: string;
+    private authID?: string;
+    private org: OrganizationGenerator;
+    private user: UserGenerator;
+    private bucket: BucketGenerator;
+    private authorization: AuthorizationGenerator;
+
+    constructor(address, authToken){
+        this.org = new OrganizationGenerator(address, authToken);
+        this.user = new UserGenerator(address, authToken);
+        this.bucket = new BucketGenerator(address, authToken);
+        this.authorization = new AuthorizationGenerator(address, authToken);
+    }
+
+    async exec(orgName: string, userName: string, bucketName: string, expireTime: number, authDescription: string){
+        this.orgID = await this.org.create(orgName);
+        this.userID = await this.user.create(userName);    
+        this.org.addUser(this.userID, this.orgID);
+        this.bucketID = await this.bucket.create(this.orgID, bucketName, expireTime);
+        this.authID = await this.authorization.create(this.orgID, this.bucketID, authDescription);
+    }
+
+
 }
 
-function createAuthorization(){
-     const authorization = new AuthorizationGenerator(authDescription, orgID, bucketID, bucketName);
-     axios(authorization.create(address, authToken))
-        .then(function(response) {
-            assignAuth(response)            
-        })
-        .catch(function (error) {
-            console.log("ERROR CREATING AUTHORIZATION");
-            console.log(error);
-            throw error;
-        });
-}
-
-function assignOrg(response){
-    console.log("Org Id: "+ response.data.id)
-    orgID = response.data.id;  
-}
-
-function assignUser(response){
-    console.log("Usr Id: "+ response.data.id)
-    userID = response.data.id;
-}
-
-function assignBucket(response){
-    console.log("Buck Id: "+ response.data.id)
-    bucketID = response.data.id;  
-}
-
-function assignAuth(response){
-    console.log("Auth Id: "+ response.data.id)
-    authID = response.data.id; 
-}
+const init = new StructureGenerator(address, authToken);
+init.exec(orgName, userName, bucketName, expireTime, authDescription);

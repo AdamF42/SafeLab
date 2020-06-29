@@ -1,6 +1,14 @@
 #!/bin/bash
 
-files_list=(./authorization/authorizationGenerator ./bucket/bucketGenerator ./user/userGenerator ./organization/organizationGenerator ./main)
+files_list=(
+  ./config/config 
+  ./authorization/authorizationGenerator 
+  ./bucket/bucketGenerator 
+  ./user/userGenerator 
+  ./organization/organizationGenerator 
+  ./main
+  ./testExistence
+)
 
 for file in ${files_list[@]}
 do
