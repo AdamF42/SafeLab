@@ -6,14 +6,13 @@ export class WriterToInflux {
     bucket: string;
     influxDB: InfluxDB;
 
-    constructor(org: string, bucket:string, url:string, token:string){
+    constructor(influxDB: InfluxDB, org: string, bucket:string){
         this.org = org;
         this.bucket = bucket;
-        this.influxDB = new InfluxDB({url, token})
+        this.influxDB = influxDB;
     }
     
     writePoint(time: Date, measure: string, value: number){
-        console.log("Time to wirte", time);
         const writeApi = this.influxDB.getWriteApi(this.org, this.bucket);
         const point = new Point(measure)
             .timestamp(time)

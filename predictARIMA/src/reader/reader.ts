@@ -1,27 +1,33 @@
 import {InfluxDB, QueryApi, FluxTableMetaData} from '@influxdata/influxdb-client'
+import { Predictor } from '../predict';
+import { ReaderResponse } from '../response';
 
 export class ReaderFromInflux {
     org: string;
     queryApi: QueryApi;
 
-    constructor(org: string, bucket:string, url:string, token:string){
-        const influxDB = new InfluxDB({url, token})
+    constructor(influxDB: InfluxDB, org: string){
         this.org = org;
         this.queryApi = influxDB.getQueryApi(org);
     }
 
-    iterOnReadElement(fluxQuery: string, funToApply: (row: string[], tableMeta: FluxTableMetaData) => void, exitFun: () => void) {
+    iterOnReadElement(fluxQuery: string, predictor: Predictor) {
         this.queryApi.queryRows(fluxQuery, {
             next(row: string [], tableMeta: FluxTableMetaData) {
-                funToApply(row, tableMeta);
+                const o = tableMeta.toObject(row)
+                var time: Date = new Date(o._time);
+                var value: number = o._value;
+                var field: string = o._field;
+                var measurement: string = o._measurement;
+                var response = new ReaderResponse(time, value, field, measurement);
+                predictor.pushReadValues(response);
             },
             error(error: Error) {
                 console.error(error)
                 console.log('\nFinished ERROR')
             },
             complete() {
-                console.log("exit fun");
-                exitFun();
+                predictor.writePrevision();
                 console.log(` \nFinished SUCCESS`);
             }
         })
