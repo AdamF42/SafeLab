@@ -1,11 +1,15 @@
 const arima = require('arima')
 
-export class Arima {
+export interface TimeSeriesForecaster {
+    makePrediction<T>(input:Array<T>): Promise<Array<T>>;
+}
 
-    pointToForecast: number;
-    pArima: number;
-    dArima: number;
-    qArima: number;
+export class Arima implements TimeSeriesForecaster{
+
+    private pointToForecast: number;
+    private pArima: number;
+    private dArima: number;
+    private qArima: number;
 
     constructor(pointToForecast: number, pArima: number, dArima: number, qArima: number){
         this.pointToForecast = pointToForecast;
@@ -13,13 +17,14 @@ export class Arima {
         this.dArima = dArima;
         this.qArima = qArima;
     }
-
-    async makePrediction(timeSeries: Array<number>): Promise<Array<number>> {
-        if (timeSeries.length == 0) {
+    async makePrediction<T>(input: T[]): Promise<T[]> {
+        if (input.length == 0) {
             console.log("No values to do prediction");
             return Promise.resolve([]);
         } else {
-            const [pred, err] = arima(timeSeries, this.pointToForecast, {
+            console.log(input);
+            
+            const [pred, err] = arima(input, this.pointToForecast, {
                 method: 0,
                 optimizer: 6,
                 p: this.pArima,
@@ -27,6 +32,7 @@ export class Arima {
                 d: this.dArima,
                 verbose: false
             })
+            console.log("End arima");
             return Promise.resolve(pred); 
         }
     }

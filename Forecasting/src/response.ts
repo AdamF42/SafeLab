@@ -1,22 +1,46 @@
-
 export class ReaderResponse {
-    private _time: Date;
-    private _value: number;
-    private _field: string;
-    private _measurement: string;
+    private _result: string;
+    private _table: string;
+    private field: string;
+    private measurement: string;
+    private start:string;
+    private stop: string;
+    private _device: string;
+    private _location: string;
+    private value: number;
+    private time: string;
 
-    constructor(time: Date, value: number, field: string, measurement: string){
-        this._time = time;
-        this._value = value;
-        this._field = field;
-        this._measurement = measurement;
+
+    constructor(
+        result: string, 
+        table: string, 
+        _field:string,
+        _measurement:string,
+        _start:string,
+        _stop:string,
+        device: string, 
+        location: string,
+        _value:number,
+        _time:string
+        ){
+        this._result = result;
+        this._table = table;
+        this.field = _field;
+        this.measurement=_measurement;
+        this.start = _start;
+        this.stop = _stop;
+        this._device = device;
+        this._location = location;
+        this.value = _value;
+        this.time = _time
     }
 
-    get value(){
-        return this._value;
+    get _measurement() {
+        return this.measurement;
     }
 
-    get measurement(){
-        return this._measurement;
+    get _value(){
+        return this.value;
     }
+
 }
