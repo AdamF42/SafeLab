@@ -7,7 +7,7 @@ import { Predictor } from './prediction/predict'
 import { interval } from 'rxjs';
 
 const NUM_POINTS_TO_FORECAST = 5;
-const DISTANCE_BETWEEN_POINTS = 1; //minuti tra un punto e il successivo
+const DISTANCE_BETWEEN_POINTS = 15; //minuti tra un punto e il successivo
 const NUM_POINT_TO_READ = "1h";
 const P_ARIMA = 2;
 const D_ARIMA = 2;
@@ -17,7 +17,7 @@ const Q_ARIMA = 2;
 const fluxQuery =
     `from(bucket: "${BUCKET}")
     |> range(start: -${NUM_POINT_TO_READ}, stop: now())
-    |> filter(fn: (r) => r._measurement == "temp")
+    |> filter(fn: (r) => r._measurement == "temperature")
     |> toFloat()
     |> aggregateWindow(every: ${DISTANCE_BETWEEN_POINTS}m, fn: median)`
 
