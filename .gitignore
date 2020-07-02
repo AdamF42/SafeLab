@@ -19,3 +19,5 @@ AlertBot/.env
 .env.old
 
 AlertBot/.idea/
+
+predictARIMA/dist/
