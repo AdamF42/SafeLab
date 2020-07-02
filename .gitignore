@@ -17,3 +17,5 @@ AlertBot/.env
 .env
 
 .env.old
+
+AlertBot/.idea/

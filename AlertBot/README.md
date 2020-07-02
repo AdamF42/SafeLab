@@ -15,9 +15,27 @@ In order to test and use, you should retrieve the telegram chat id used.
 `http://localhost:4000/alert` 
 
 ``` JSON
-{
-    "location":"living room",
-    "people": 8
+{ 
+    "_check_id": "05a5547a510fb000",
+    "_check_name": "Temperature",
+    "_level": "crit",
+    "_measurement": "notifications",
+    "_message": "",
+    "_notification_endpoint_id": "05a554abfdcfb000",
+    "_notification_endpoint_name": "Telegram",
+    "_notification_rule_id": "05eec2ceea796000",
+    "_notification_rule_name": "Temperature",
+    "_source_measurement": "temperature",
+    "_source_timestamp": 1593626205000000000,
+    "_start": "2020-07-01T17:55:00Z",
+    "_status_timestamp": 1593626205000000000,
+    "_stop": "2020-07-01T17:57:00Z",
+    "_time": "2020-07-01T17:57:00Z",
+    "_type": "threshold",
+    "_version": 1,
+    "device": "RoomWeather",
+    "location": "ubuntu",
+    "value": 30.6 
 }
 ```
 
