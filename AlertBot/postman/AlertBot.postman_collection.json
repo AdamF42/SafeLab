@@ -28,7 +28,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"location\":\"living room\",\n    \"people\": 10\n}",
+					"raw": "{ \"_check_id\": \"05a5547a510fb000\",\n  \"_check_name\": \"Temperature\",\n  \"_level\": \"crit\",\n  \"_measurement\": \"notifications\",\n  \"_message\": \"\",\n  \"_notification_endpoint_id\": \"05a554abfdcfb000\",\n  \"_notification_endpoint_name\": \"Telegram\",\n  \"_notification_rule_id\": \"05eec2ceea796000\",\n  \"_notification_rule_name\": \"Temperature\",\n  \"_source_measurement\": \"temperature\",\n  \"_source_timestamp\": 1593626205000000000,\n  \"_start\": \"2020-07-01T17:55:00Z\",\n  \"_status_timestamp\": 1593626205000000000,\n  \"_stop\": \"2020-07-01T17:57:00Z\",\n  \"_time\": \"2020-07-01T17:57:00Z\",\n  \"_type\": \"threshold\",\n  \"_version\": 1,\n  \"device\": \"RoomWeather\",\n  \"location\": \"ubuntu\",\n  \"value\": 30.6 \n}",
 					"options": {
 						"raw": {
 							"language": "json"
