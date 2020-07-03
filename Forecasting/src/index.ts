@@ -18,7 +18,7 @@ const persister = new Persister(INFLUX_URL,INFLUX_TOKEN,ORG,BUCKET);
 function makeQuery(measurement: string):string {
     return `from(bucket: "${BUCKET}")
     |> range(start: -${NUM_POINT_TO_READ}, stop: now())
-    |> filter(fn: (r) => r._measurement == ${measurement})
+    |> filter(fn: (r) => r._measurement == "${measurement}")
     |> toFloat()
     |> aggregateWindow(every: ${DISTANCE_BETWEEN_POINTS}m, fn: median)`;
 }
