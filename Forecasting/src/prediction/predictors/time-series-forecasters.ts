@@ -21,9 +21,7 @@ export class Arima implements TimeSeriesForecaster{
         if (input.length == 0) {
             console.log("No values to do prediction");
             return Promise.resolve([]);
-        } else {
-            console.log(input);
-            
+        } else {           
             const [pred, err] = arima(input, this.pointToForecast, {
                 method: 0,
                 optimizer: 6,
@@ -32,7 +30,6 @@ export class Arima implements TimeSeriesForecaster{
                 d: this.dArima,
                 verbose: false
             })
-            console.log("End arima");
             return Promise.resolve(pred); 
         }
     }

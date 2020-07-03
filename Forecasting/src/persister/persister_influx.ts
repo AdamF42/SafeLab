@@ -1,13 +1,12 @@
-
 import {InfluxDB, Point, QueryApi, WriteApi, FluxTableMetaData} from '@influxdata/influxdb-client'
 const {hostname} = require('os')
 
-const VERBOSE_MODE: boolean = true;
+const VERBOSE_MODE: boolean = false;
 const STATUS_OK: boolean = true;
 const STATUS_ERROR: boolean =false;
 
 export interface IPersister {
-	writeData(demoName: string, sensorName: string, value: number):Promise<boolean>;
+	writeData(timestamp: Date, sensorName: string, value: number):Promise<boolean>;
 	// TODO: write a class to model the query
 	getLastData(query:string): Promise<Array<number>>
 }
@@ -23,14 +22,14 @@ export class Persister implements IPersister{
 		this.influx  = new InfluxDB({url, token});
 	}
 
-	public async writeData(demoName: string, sensorName: string, value: number): Promise<boolean> {
+	public async writeData(timestamp: Date, sensorName: string, value: number): Promise<boolean> {
 		let status: boolean=STATUS_OK;
 		const writeApi= this.influx.getWriteApi(this.org, this.bucket);
 		writeApi.useDefaultTags({location: hostname()});
 	
 		const point = new Point(sensorName)
-  			       .tag('user', demoName)
-  			       .floatField('value', value);
+			.timestamp(timestamp)
+			.floatField('value', value);
 
 		status= await this.sendWriteCommand(writeApi, point);
 
