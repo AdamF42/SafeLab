@@ -1,13 +1,17 @@
 #!/bin/bash
 
 files_list=(
-  ./config/config 
-  ./authorization/authorizationGenerator 
-  ./bucket/bucketGenerator 
-  ./user/userGenerator 
-  ./organization/organizationGenerator 
-  ./main
   ./testExistence
+  ./createEnv
+  ./createAlert
+
+  ./environment/alert/alertGenerator
+  ./environment/authorization/authorizationGenerator 
+  ./environment/bucket/bucketGenerator 
+  ./environment/config/config 
+  ./environment/organization/organizationGenerator 
+  ./environment/user/userGenerator 
+  ./environment/envGenerator
 )
 
 for file in ${files_list[@]}

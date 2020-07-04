@@ -38,9 +38,9 @@ export class OrganizationGenerator {
     addUser(userId: string, orgId: string){
         let config = new Config('post', this.address+'/orgs/'+orgId+'/members', 'Token '+this.authToken, 'application/json', {'id':userId} )
         axios(config.getObjConfig())
-        .then(
-            console.log("User "+userId+"added to org "+orgId)
-        )
+        // .then(
+        //     console.log("User "+userId+"added to org "+orgId)
+        // )
         .catch(function (error) {
             console.log("ERROR IN ADDING USR TO ORG");
             console.log(error.message);

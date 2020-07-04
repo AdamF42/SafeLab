@@ -1,5 +1,3 @@
-//node testExistence.js 60nvdyNBIb5nMBmg3RVNTdanrjUksYh7fGjlXYJ6Rg8dP4lesVV80XjNmWFIkvu9_FpHe3vyL2V5YhqBbav2Kw== http://localhost:9999/api/v2 SuperCiccii Ciccioneeee Ciccio
-
 var axios = require('axios');
 
 var Args = process.argv.slice(2);
@@ -10,6 +8,7 @@ const address = Args[1];
 const orgName = Args[2]; 
 const userName = Args[3];
 const bucketName = Args[4]; 
+const alertName = Args[5];
 
 
 axios(getConfig('/orgs'))
@@ -47,12 +46,24 @@ axios(getConfig('/buckets'))
 })
 .catch(function (error) {
   if (error == "name used") {
-    console.log("Cannot create usr because usr name is already in use")
+    console.log("Cannot create bucket because bucket name is already in use")
   } else {
     throw(error)
   }
 });
 
+axios(getConfig('/checks'))
+.then(function (response) {
+  response.data.checks.forEach(element => checkUsage(element, alertName));
+  console.log("Name for alert is okay");
+})
+.catch(function (error) {
+  if (error == "name used") {
+    console.log("Cannot create alert because alert name is already in use")
+  } else {
+    throw(error)
+  }
+});
 
 function checkUsage(element, name: string){
   if (!name.localeCompare(element.name)) {
