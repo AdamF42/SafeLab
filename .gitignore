@@ -20,6 +20,8 @@ AlertBot/.env
 
 AlertBot/.idea/
 
+ForecastingService/.idea/
+
 WriterService/dist/
 
 WriterService/dist/
