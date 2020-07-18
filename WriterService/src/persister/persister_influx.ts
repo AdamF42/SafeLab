@@ -24,14 +24,16 @@ export class Persister implements IPersister{
 
 	public async writeData(timestamp: Date, sensorName: string, value: number): Promise<boolean> {
 		let status: boolean=STATUS_OK;
-		const writeApi= this.influx.getWriteApi(this.org, this.bucket);
-		writeApi.useDefaultTags({location: hostname()});
+		// const writeApi= this.influx.getWriteApi(this.org, this.bucket);
+		// writeApi.useDefaultTags({location: hostname()});
 	
 		const point = new Point(sensorName)
 			.timestamp(timestamp)
 			.floatField('value', value);
 
-		status= await this.sendWriteCommand(writeApi, point);
+		console.log(point);
+
+		// status= await this.sendWriteCommand(writeApi, point);
 
 		return status;
 	}
