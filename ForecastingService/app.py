@@ -2,24 +2,21 @@ import os
 
 import numpy as np
 import pandas as pd
-from flask import Flask, request, Response
-from pandas.plotting import register_matplotlib_converters
-
-register_matplotlib_converters()
-
+import tensorflow as tf
+from flask import Flask, Response
 from influxdb_client import InfluxDBClient
 
-import tensorflow as tf
-
 app = Flask(__name__)
-# Load the model
-# model = load()
 
 # Auth parameters
-my_token = "yaKfFeAsha8tNAZxvYeZBMmq-khO8tz-6Ut_PARgohiWzeW2j8BB86ND33Qbq7hR8bylmOROPQAUr-7M103_Yw=="
-my_org = "iot-org"
-bucket = "iot-demo"
-client = InfluxDBClient(url="http://192.168.1.100:9999", token=my_token, org=my_org, debug=False)
+my_token = os.environ['INFLUX_TOKEN']
+my_org = os.environ['INFLUX_ORG']
+bucket = os.environ['INFLUX_BUCKET']
+influx_url = os.environ['INFLUX_URL']
+
+client = InfluxDBClient(url=influx_url, token=my_token, org=my_org, debug=False)
+
+print(os.environ)
 
 
 class Query:
@@ -61,9 +58,6 @@ def multivariate_data(dataset, step):
 
 
 def normalize_dataframe(df):
-    # features_considered = ['pressure', 'temperature', 'humidity']
-    # features = df[features_considered]
-    # features.index = df.index
     dataset = df.values
     data_mean = dataset.mean(axis=0)
     data_std = dataset.std(axis=0)
@@ -74,19 +68,17 @@ def normalize_dataframe(df):
 
 os.chdir(os.path.dirname(os.path.realpath(__file__)))
 
-if (os.path.exists('./24_step_model')):
-    multi_step_model = tf.keras.models.load_model('24_step_model')
+if (os.path.exists('./model')):
+    multi_step_model = tf.keras.models.load_model('model')
 
 
 @app.route('/predict', methods=['GET'])
 def predict():
-
-    # Get the data from the POST request.
-    # data = request.get_json(force=True)
     data = []
     features = ["pressure", "temperature", "humidity"]
     for f in features:
-        data.append(client.query_api().query_data_frame(org=my_org,query=Query.get_query(bucket, f, "1d", "5m", "RoomWeather")))
+        data.append(client.query_api().query_data_frame(org=my_org,
+                                                        query=Query.get_query(bucket, f, "1d", "5m", "RoomWeather")))
 
     df = get_dataframe(data[0], data[1], data[2])
 
@@ -99,6 +91,9 @@ def predict():
     dti = pd.date_range(end_date, periods=24, freq='300S')
     rdf = pd.DataFrame(dti.values, columns=['time'])
     rdf['temperature'] = prediction[0]
+    rdf['humidity'] = prediction[0]
+    rdf['pressure'] = prediction[0]
+    rdf['people'] = prediction[0]
     rdf = rdf.set_index('time')
     return Response(rdf.to_json(), mimetype='application/json')
 

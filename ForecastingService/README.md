@@ -54,7 +54,12 @@ Simple service to forecast sensors values.
 ## How to setup
 
 1. Build the image.
-    `docker build --tag=forecasting_service .`
+    `docker build \
+    --build-arg INFLUX_TOKEN=$INFLUX_TOKEN \
+    --build-arg INFLUX_URL=$INFLUX_URL \
+    --build-arg INFLUX_ORG=$INFLUX_ORG \
+    --build-arg INFLUX_BUCKET=$INFLUX_BUCKET \
+    --tag=forecasting_service .`
 2. Copy the model in the desidered folder.
 
 3. Run the container.

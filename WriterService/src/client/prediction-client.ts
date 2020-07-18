@@ -7,7 +7,6 @@ export class PredictionClient extends HttpClient {
     super(url);
   }
 
-  public getPrediction = () => this.instance.get<Prediction>('/predict');
-                                            //.then(response => console.log(response));
+  public getPrediction = async () => this.instance.get<Prediction>('/predict');
 
 }
