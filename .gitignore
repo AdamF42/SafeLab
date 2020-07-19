@@ -27,3 +27,5 @@ WriterService/dist/
 WriterService/dist/
 
 InitializeInflux/dist/
+
+WriterService/.vscode/
