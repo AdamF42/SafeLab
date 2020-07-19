@@ -82,10 +82,13 @@ def predict_people(df):
 def predict_room(df):
     df = df.drop(columns=['people'])
     (to_be_predicted, data_mean, data_std) = normalize_dataframe(df)
-    prediction = room_model.predict(to_be_predicted)
-    prediction = (data_std[1] * prediction) + data_mean[1]
-    return prediction
-
+    prediction_temperature = temperature_model.predict(to_be_predicted)
+    prediction_temperature = (data_std[1] * prediction) + data_mean[1]
+    prediction_humidity = humidity_model.predict(to_be_predicted)
+    prediction_humidity = (data_std[2] * prediction) + data_mean[2]
+    prediction_pressure = pressure_model.predict(to_be_predicted)
+    prediction_pressure = (data_std[0] * prediction) + data_mean[0]
+    return prediction_temperature, prediction_humidity, prediction_pressure
 
 
 os.chdir(os.path.dirname(os.path.realpath(__file__)))
@@ -95,6 +98,12 @@ if (os.path.exists('./model')):
 
 if (os.path.exists('./people_model.h5')):
     people_model = tf.keras.models.load_model('people_model.h5')
+
+if (os.path.exists('./humidity_model.h5')):
+    people_model = tf.keras.models.load_model('humidity_model.h5')
+
+if (os.path.exists('./pressure_model.h5')):
+    people_model = tf.keras.models.load_model('pressure_model.h5')
 
 
 @app.route('/predict', methods=['GET'])
@@ -113,14 +122,14 @@ def predict():
     df = get_dataframe(data[0], data[1], data[2], data[3])
     end_date = df.index[len(df) - 1] + pd.to_timedelta(300, unit='S')
 
-    room_prediction = predict_room(df)
+    temperature_prediction, humidity_prediction, pressure_prediction = predict_room(df)
     people_prediction = predict_people(df)
     
     dti = pd.date_range(end_date, periods=24, freq='300S')
     rdf = pd.DataFrame(dti.values, columns=['time'])
-    rdf['temperature'] = room_prediction[0]
-    rdf['humidity'] = room_prediction[0]
-    rdf['pressure'] = room_prediction[0]
+    rdf['temperature'] = temperature_prediction[0]
+    rdf['humidity'] = humidity_prediction[0]
+    rdf['pressure'] = pressure_prediction[0]
     rdf['people'] = people_prediction[0].astype('int')
     rdf = rdf.set_index('time')
     return Response(rdf.to_json(), mimetype='application/json')
