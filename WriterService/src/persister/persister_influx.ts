@@ -35,6 +35,7 @@ export class Persister {
 		
 		const points = data.map( e => {
 			return new Point(e.sensorName)
+			.tag("device", "Forecaster")
 			.timestamp(e.timestamp)
 			.floatField('value', e.value);
 		})
