@@ -1,4 +1,4 @@
-FROM node:12.18.1-alpine3.12
+FROM node:12.18.1
 
 # use the value to set the ENV var default
 ENV INFLUX_URL=$INFLUX_URL

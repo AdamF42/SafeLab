@@ -9,10 +9,10 @@ from influxdb_client import InfluxDBClient
 app = Flask(__name__)
 
 # Auth parameters
-my_token = "yaKfFeAsha8tNAZxvYeZBMmq-khO8tz-6Ut_PARgohiWzeW2j8BB86ND33Qbq7hR8bylmOROPQAUr-7M103_Yw==" #os.environ['INFLUX_TOKEN']
-my_org = "iot-org" #os.environ['INFLUX_ORG']
-bucket = "iot-demo" #os.environ['INFLUX_BUCKET']
-influx_url = "http://192.168.1.100:9999" #os.environ['INFLUX_URL']
+my_token = os.environ['INFLUX_TOKEN']
+my_org = os.environ['INFLUX_ORG']
+bucket = os.environ['INFLUX_BUCKET']
+influx_url = os.environ['INFLUX_URL']
 
 
 client = InfluxDBClient(url=influx_url, token=my_token, org=my_org, debug=False)
@@ -83,11 +83,11 @@ def predict_room(df):
     df = df.drop(columns=['people'])
     (to_be_predicted, data_mean, data_std) = normalize_dataframe(df)
     prediction_temperature = temperature_model.predict(to_be_predicted)
-    prediction_temperature = (data_std[1] * prediction) + data_mean[1]
+    prediction_temperature = (data_std[1] * prediction_temperature) + data_mean[1]
     prediction_humidity = humidity_model.predict(to_be_predicted)
-    prediction_humidity = (data_std[2] * prediction) + data_mean[2]
+    prediction_humidity = (data_std[2] * prediction_humidity) + data_mean[2]
     prediction_pressure = pressure_model.predict(to_be_predicted)
-    prediction_pressure = (data_std[0] * prediction) + data_mean[0]
+    prediction_pressure = (data_std[0] * prediction_pressure) + data_mean[0]
     return prediction_temperature, prediction_humidity, prediction_pressure
 
 
@@ -97,13 +97,13 @@ if (os.path.exists('./model/people_model.h5')):
     people_model = tf.keras.models.load_model('./model/people_model.h5')
 
 if (os.path.exists('./model/humidity_model.h5')):
-    people_model = tf.keras.models.load_model('./model/humidity_model.h5')
+    humidity_model = tf.keras.models.load_model('./model/humidity_model.h5')
 
 if (os.path.exists('./model/pressure_model.h5')):
-    people_model = tf.keras.models.load_model('./model/pressure_model.h5')
+    pressure_model = tf.keras.models.load_model('./model/pressure_model.h5')
 
 if (os.path.exists('./model/temperature_model.h5')):
-    people_model = tf.keras.models.load_model('./model/temperature_model.h5')
+    temperature_model = tf.keras.models.load_model('./model/temperature_model.h5')
 
 @app.route('/predict', methods=['GET'])
 def predict():

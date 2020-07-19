@@ -1,7 +1,7 @@
 version: "3.7"
 services:
   grafana:
-    image: grafana/grafana:6.7.3
+    image: grafana/grafana:7.1.0
     container_name: grafana
     restart: unless-stopped
     user: ${GRAFANA_USER_ID}
@@ -14,7 +14,7 @@ services:
     env_file:
       - .env
   influxdb:
-    image: quay.io/influxdb/influxdb:2.0.0-beta
+    image: influx
     container_name: influxdb
     restart: unless-stopped
     ports:
@@ -31,7 +31,7 @@ services:
     restart: unless-stopped
     network_mode: host
     environment:
-      - "TZ=America/Los_Angeles"
+      - "TZ=Europe/Rome"
     volumes:
       - ${MOZILLA_IOT_VOLUME}:/home/node/.mozilla-iot
     logging:
@@ -49,6 +49,17 @@ services:
       - 4000:4000
     build:
       context: ./AlertBot
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    networks:
+      - monitoring
+  writer_service:
+    image: writer_service
+    container_name: writer_service
+    restart: unless-stopped
+    build:
+      context: ./WriterService
       dockerfile: Dockerfile
     env_file:
       - .env

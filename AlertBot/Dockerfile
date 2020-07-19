@@ -1,7 +1,7 @@
-FROM node:12.18.1-alpine3.12
+FROM node:12.18.1
 
 # use the value to set the ENV var default
-ENV TOKEN=$TOKEN
+ENV TELEGRAM_TOKEN=$TELEGRAM_TOKEN
 ENV CHAT_ID=$CHAT_ID
 
 # Create app directory

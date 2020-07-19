@@ -94,16 +94,12 @@ docker stop influxdb && docker rm influxdb
 
 sudo rm $INFLUX_VOLUME/influx_setup $INFLUX_VOLUME/install.sh
 
-# # check meta.db file in meta folder to make sure that the changes were correctly written
-#DATA=$(sudo cat $INFLUX_VOLUME/influxd.bolt | grep 'User Created' )
-#[[ "$DATA" != *"Binary"* ]] && { cerror "influxd.bolt file incorrenct."; exit 1 ; }
-
 ############################# GRAFANA #############################
 
 docker container run -d --name grafana \
     -v=$GRAFANA_VOLUME:/var/lib/grafana \
     -p 3000:3000 \
-    grafana/grafana:6.7.3 \
+    grafana/grafana:7.1.0 \
 
 wait-for-url http://localhost:3000
 
@@ -125,7 +121,7 @@ sudo tee .env << END
 INFLUX_VOLUME=$INFLUX_VOLUME
 GRAFANA_VOLUME=$GRAFANA_VOLUME
 MOZILLA_IOT_VOLUME=$MOZILLA_IOT_VOLUME
-TOKEN=$TOKEN
+TELEGRAM_TOKEN=$TELEGRAM_TOKEN
 CHAT_ID=$CHAT_ID
 GRAFANA_USER_ID=$GRAFANA_USER_ID
 END
