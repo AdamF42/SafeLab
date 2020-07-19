@@ -93,18 +93,17 @@ def predict_room(df):
 
 os.chdir(os.path.dirname(os.path.realpath(__file__)))
 
-if (os.path.exists('./model')):
-    room_model = tf.keras.models.load_model('model')
+if (os.path.exists('./model/people_model.h5')):
+    people_model = tf.keras.models.load_model('./model/people_model.h5')
 
-if (os.path.exists('./people_model.h5')):
-    people_model = tf.keras.models.load_model('people_model.h5')
+if (os.path.exists('./model/humidity_model.h5')):
+    people_model = tf.keras.models.load_model('./model/humidity_model.h5')
 
-if (os.path.exists('./humidity_model.h5')):
-    people_model = tf.keras.models.load_model('humidity_model.h5')
+if (os.path.exists('./model/pressure_model.h5')):
+    people_model = tf.keras.models.load_model('./model/pressure_model.h5')
 
-if (os.path.exists('./pressure_model.h5')):
-    people_model = tf.keras.models.load_model('pressure_model.h5')
-
+if (os.path.exists('./model/temperature_model.h5')):
+    people_model = tf.keras.models.load_model('./model/temperature_model.h5')
 
 @app.route('/predict', methods=['GET'])
 def predict():
