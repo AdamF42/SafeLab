@@ -1,0 +1,19 @@
+FROM python:3.8.3
+
+# use the value to set the ENV var default
+ARG INFLUX_TOKEN
+ARG INFLUX_URL
+ARG INFLUX_ORG
+ARG INFLUX_BUCKET
+
+ENV INFLUX_TOKEN=$INFLUX_TOKEN
+ENV INFLUX_URL=$INFLUX_URL
+ENV INFLUX_ORG=$INFLUX_ORG
+ENV INFLUX_BUCKET=$INFLUX_BUCKET
+
+COPY . /app
+WORKDIR /app
+RUN pip install --upgrade pip
+RUN pip install -r requirements.txt
+ENTRYPOINT ["python"]
+CMD ["app.py"]

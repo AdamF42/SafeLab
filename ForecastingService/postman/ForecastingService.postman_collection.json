@@ -1,0 +1,130 @@
+{
+	"info": {
+		"_postman_id": "197336c3-5df0-4a3b-8fc0-2f4f680dcc20",
+		"name": "ForecastingService",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "temperature",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:5000/predict/temperature?start=2020-07-11 15:40:00&end=2020-07-12 15:40:00",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"predict",
+						"temperature"
+					],
+					"query": [
+						{
+							"key": "start",
+							"value": "2020-07-11 15:40:00"
+						},
+						{
+							"key": "end",
+							"value": "2020-07-12 15:40:00"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "humidity",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:5000/predict/humidity?start=2020-07-11 15:40:00&end=2020-07-12 15:40:00",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"predict",
+						"humidity"
+					],
+					"query": [
+						{
+							"key": "start",
+							"value": "2020-07-11 15:40:00"
+						},
+						{
+							"key": "end",
+							"value": "2020-07-12 15:40:00"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "pressure",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:5000/predict/pressure?start=2020-07-11 15:40:00&end=2020-07-12 15:40:00",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"predict",
+						"pressure"
+					],
+					"query": [
+						{
+							"key": "start",
+							"value": "2020-07-11 15:40:00"
+						},
+						{
+							"key": "end",
+							"value": "2020-07-12 15:40:00"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "peouple",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:5000/predict/peouple?start=2020-07-11 15:40:00&end=2020-07-12 15:40:00",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"predict",
+						"peouple"
+					],
+					"query": [
+						{
+							"key": "start",
+							"value": "2020-07-11 15:40:00"
+						},
+						{
+							"key": "end",
+							"value": "2020-07-12 15:40:00"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}

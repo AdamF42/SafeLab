@@ -1,9 +1,10 @@
 FROM node:12.18.1
 
 # use the value to set the ENV var default
-ENV TELEGRAM_TOKEN=$TELEGRAM_TOKEN
-ENV CHAT_ID=$CHAT_ID
-
+ENV INFLUX_URL=$INFLUX_URL
+ENV INFLUX_TOKEN=$INFLUX_TOKEN
+ENV ORG=$ORG
+ENV BUCKET=$BUCKET
 # Create app directory
 WORKDIR /usr/src/app
 ADD package*.json ./

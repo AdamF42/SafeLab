@@ -1,0 +1,5 @@
+tensorflow
+Flask
+numpy
+pandas
+influxdb_client
