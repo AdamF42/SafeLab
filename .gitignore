@@ -23,3 +23,5 @@ AlertBot/.idea/
 WriterService/dist/
 
 WriterService/dist/
+
+InitializeInflux/dist/
