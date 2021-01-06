@@ -17,7 +17,7 @@
   "dependencies": {
     "@influxdata/influxdb-client": "^1.5.0",
     "@reactivex/rxjs": "^6.6.0",
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "rxjs": "^6.6.0",
     "rxjs-compat": "^6.6.0",
     "typescript": "^3.9.5"
